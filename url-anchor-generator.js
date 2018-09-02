@@ -1,19 +1,19 @@
 jQuery(document).ready(function() {
 
-	// Execute on button click
-	jQuery('button').click(function(e) {
-  
-  	// Check which button has been clicked - match each case
-  	var idClicked = e.target.id;
-    
-    switch(idClicked) {
-    
-    	case "joinURLs":	// Join URLs and Anchors w/ options
-    
+  // Execute on button click
+  jQuery('button').click(function(e) {
+
+    // Check which button has been clicked - match each case
+    var idClicked = e.target.id;
+
+    switch (idClicked) {
+
+      case "joinURLs": // Join URLs and Anchors w/ options
+
         // Read and clean URLs/Anchors from empty lines and whitespace, set variables
         var urls = jQuery('#urls').val().split(/\r?\n/);
         var anchors = jQuery('#anchors').val().split(/\r?\n/);
-        var urlsCleaned = urls.filter(n =>n);
+        var urlsCleaned = urls.filter(n => n);
         var anchorsCleaned = anchors.filter(n => n);
         var urlsLength = urlsCleaned.length;
         var anchorsLength = anchorsCleaned.length;
@@ -42,15 +42,14 @@ jQuery(document).ready(function() {
         if (hrefTitle.trim()) {
           hrefTitleStr = " title=\"" + hrefTitle + "\"";
         }
-        
+
         if (hrefLang.trim()) {
-        	if (hrefLang.length === 2) {
-          	hrefLangStr = " hreflang=\"" + hrefLang + "\"";
+          if (hrefLang.length === 2) {
+            hrefLangStr = " hreflang=\"" + hrefLang + "\"";
           } else {
-          	jQuery('#hrefLang').val("");
-          	jQuery('#hrefLang').attr("placeholder", "Invalid Language Code")
+            jQuery('#hrefLang').val("");
+            jQuery('#hrefLang').attr("placeholder", "Invalid Language Code")
           }
-        	
         }
 
         // Generate URLs and Anchors
@@ -61,30 +60,42 @@ jQuery(document).ready(function() {
         }
 
         // Print Result and break
-        jQuery('#result').val(result.join('\n'));       
+        jQuery('#result').val(result.join('\n'));
         break;
-        
-      case "clearURLs":		// Clear URL Textarea
+
+      case "clearURLs":	// Clear URL Textarea
         e.preventDefault();
         jQuery('#urls').val('');
         break;
-        
+
       case "clearAnchors":	// Clear Anchor Textarea
         e.preventDefault();
         jQuery('#anchors').val('');
         break;
-        
+
       case "loadURLs":	// Load URLs from file - Requires HTML input type="file"
         jQuery('#loadURLFile').trigger('click');
         break;
-        
-      case "loadAnchors":
-      	jQuery('#loadAnchorFile').trigger('click');
+
+      case "loadAnchors":	// Load Anchors from file - Requires HTML input type="file"
+        jQuery('#loadAnchorFile').trigger('click');
         break;
-        
-      case "saveFile":
+
+      case "genericKeywords":	// Load list of generic keywords from server source - Needs to be on same domain as script
+        jQuery.ajax({
+          url: "https://serpseed.com/wp-content/themes/serpseed/seo-tools/files/generic-keywords.txt",
+          dataType: "text",
+          success: function(data) {
+            jQuery('#anchors').val(data);
+          }
+        });
+        break;
+
+      case "saveFile":	// Save contents of results textarea to .TXT file
         var textToSave = jQuery('#result').val();
-        var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+        var textToSaveAsBlob = new Blob([textToSave], {
+          type: "text/plain"
+        });
         var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
         var fileNameToSaveAs = jQuery('#saveFilename').val() + ".txt"
 
@@ -98,11 +109,11 @@ jQuery(document).ready(function() {
 
         downloadLink.click();
         break;
-        
+
     } // End Switch Satement
-    
-	});
-  	
+
+  });
+
   // Handlers could be improved, need way to combine both into one.
   // Handler for loading URL Files
   jQuery('#loadURLFile').click(function() {
@@ -117,7 +128,7 @@ jQuery(document).ready(function() {
         var reader = new FileReader();
         reader.onload = function() {
 
-          jQuery(fileDisplayArea).val(reader.result);      
+          jQuery(fileDisplayArea).val(reader.result);
 
         }
         reader.readAsText(file);
@@ -125,7 +136,7 @@ jQuery(document).ready(function() {
         jQuery(fileDisplayArea).val("File not supported!");
       }
     });
-  });    
+  });
 
   // Handler for loading Anchor Files
   jQuery('#loadAnchorFile').click(function() {
@@ -140,7 +151,7 @@ jQuery(document).ready(function() {
         var reader = new FileReader();
         reader.onload = function() {
 
-          jQuery(fileDisplayArea).val(reader.result);      
+          jQuery(fileDisplayArea).val(reader.result);
 
         }
         reader.readAsText(file);
@@ -149,10 +160,9 @@ jQuery(document).ready(function() {
       }
     });
   });
-	
-	function destroyClickedElement(event)
-	{
-		document.body.removeChild(event.target);
-	}
-  
+
+  function destroyClickedElement(event) {
+    document.body.removeChild(event.target);
+  }
+
 });
