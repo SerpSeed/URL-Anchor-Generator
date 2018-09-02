@@ -8,7 +8,7 @@ jQuery(document).ready(function() {
     
     switch(idClicked) {
     
-    	case "joinurls":	// Join URLs and Anchors w/ options
+    	case "joinURLs":	// Join URLs and Anchors w/ options
     
         // Read and clean URLs/Anchors from empty lines and whitespace, set variables
         var urls = jQuery('#urls').val().split(/\r?\n/);
@@ -24,9 +24,11 @@ jQuery(document).ready(function() {
         var noFollow = jQuery('#noFollow').prop("checked");
         var hrefTarget = jQuery('#hrefTarget').prop("checked");
         var hrefTitle = jQuery('#hrefTitle').val();
+        var hrefLang = jQuery('#hrefLang').val();
         var noFollowStr = "";
         var hrefTargetStr = "";
         var hrefTitleStr = "";
+        var hrefLangStr = "";
 
         // Check if any options have been enabled/set
         if (noFollow) {
@@ -40,11 +42,21 @@ jQuery(document).ready(function() {
         if (hrefTitle.trim()) {
           hrefTitleStr = " title=\"" + hrefTitle + "\"";
         }
+        
+        if (hrefLang.trim()) {
+        	if (hrefLang.length === 2) {
+          	hrefLangStr = " hreflang=\"" + hrefLang + "\"";
+          } else {
+          	jQuery('#hrefLang').val("");
+          	jQuery('#hrefLang').attr("placeholder", "Invalid Language Code")
+          }
+        	
+        }
 
         // Generate URLs and Anchors
         for (var u = 0; u < urlsLength; u++) {
           for (var a = 0; a < anchorsLength; a++) {
-            result[rkey++] = "<a href=\"" + urls[u] + "\"" + noFollowStr + hrefTargetStr + hrefTitleStr + ">" + anchors[a] + "</a>"
+            result[rkey++] = "<a href=\"" + urls[u] + "\"" + noFollowStr + hrefTargetStr + hrefTitleStr + hrefLangStr + ">" + anchors[a] + "</a>"
           }
         }
 
@@ -66,11 +78,11 @@ jQuery(document).ready(function() {
         jQuery('#loadURLFile').trigger('click');
         break;
         
-      case "loadAnchors":	// Load Anchors from file - Requires HTML input type="file"
+      case "loadAnchors":
       	jQuery('#loadAnchorFile').trigger('click');
         break;
         
-      case "saveFile":	// Save Result Output Window to Text File
+      case "saveFile":
         var textToSave = jQuery('#result').val();
         var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
         var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
@@ -91,52 +103,52 @@ jQuery(document).ready(function() {
     
 	});
   	
-	// Handlers could be improved, need way to combine both into one.
-	// Handler for loading URL Files
-	jQuery('#loadURLFile').click(function() {
-		
-	var fileInput = jQuery('#loadURLFile');
-	var fileDisplayArea = jQuery('#urls');
+  // Handlers could be improved, need way to combine both into one.
+  // Handler for loading URL Files
+  jQuery('#loadURLFile').click(function() {
+    var fileInput = jQuery('#loadURLFile');
+    var fileDisplayArea = jQuery('#urls');
 
-		jQuery(fileInput).change(function() {
-		  var file = jQuery(fileInput).prop('files')[0];
-		  var textType = /text.*/;
+    jQuery(fileInput).change(function() {
+      var file = jQuery(fileInput).prop('files')[0];
+      var textType = /text.*/;
 
-		  if (file.type.match(textType)) {
-			var reader = new FileReader();
-			reader.onload = function() {
-			  jQuery(fileDisplayArea).val(reader.result);      
-			}
-			reader.readAsText(file);
-		  } else {
-			jQuery(fileDisplayArea).val("File not supported!");
-		  }
-		});
-	});    
+      if (file.type.match(textType)) {
+        var reader = new FileReader();
+        reader.onload = function() {
 
-	// Handler for loading Anchor Files
-	jQuery('#loadAnchorFile').click(function() {
-		
-	var fileInput = jQuery('#loadAnchorFile');
-	var fileDisplayArea = jQuery('#anchors');
+          jQuery(fileDisplayArea).val(reader.result);      
 
-	jQuery(fileInput).change(function() {
-	  var file = jQuery(fileInput).prop('files')[0];
-	  var textType = /text.*/;
+        }
+        reader.readAsText(file);
+      } else {
+        jQuery(fileDisplayArea).val("File not supported!");
+      }
+    });
+  });    
 
-	  if (file.type.match(textType)) {
-		var reader = new FileReader();
-		reader.onload = function() {
+  // Handler for loading Anchor Files
+  jQuery('#loadAnchorFile').click(function() {
+    var fileInput = jQuery('#loadAnchorFile');
+    var fileDisplayArea = jQuery('#anchors');
 
-		  jQuery(fileDisplayArea).val(reader.result);      
+    jQuery(fileInput).change(function() {
+      var file = jQuery(fileInput).prop('files')[0];
+      var textType = /text.*/;
 
-		}
-		reader.readAsText(file);
-	  } else {
-		jQuery(fileDisplayArea).val("File not supported!");
-	  }
-	});
-	});
+      if (file.type.match(textType)) {
+        var reader = new FileReader();
+        reader.onload = function() {
+
+          jQuery(fileDisplayArea).val(reader.result);      
+
+        }
+        reader.readAsText(file);
+      } else {
+        jQuery(fileDisplayArea).val("File not supported!");
+      }
+    });
+  });
 	
 	function destroyClickedElement(event)
 	{
